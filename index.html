@@ -3,74 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسجل نقاط الدومينو (نظام أمريكي)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>مسجل نقاط الدومينو</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
         body {
-            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(to bottom right, #EEF2FF, #F3E8FF);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        /* Container Styles */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header Styles */
+        h1 {
+            color: #4338CA;
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Input Styles */
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            text-align: right;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4338CA;
+            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #4338CA;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #3730A3;
+        }
+
+        .btn-secondary {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #DC2626;
+        }
+
+        /* Team Card Styles */
+        .teams-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .team-card {
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .team-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        .team-wins {
+            font-size: 0.875rem;
+            color: #6B7280;
+        }
+
+        .team-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4338CA;
+        }
+
+        .score-button {
+            display: block;
+            width: fit-content;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            border: 2px solid #4338CA;
+            background: white;
+            color: #4338CA;
+            border-radius: 9999px;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .score-button:hover {
+            background: #EEF2FF;
+        }
+
+        .score-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            z-index: 50;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 28rem;
+            width: 100%;
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6B7280;
+        }
+
+        .close-button:hover {
+            color: #374151;
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        .winner-message {
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4338CA;
+        }
+
+        .loser-card {
+            margin-top: 1rem;
+            background: #F9FAFB;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        /* Actions Container */
+        .actions {
+            margin-top: 2rem;
+            text-align: center;
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-8">
-        <h1 id="مسجل-نقاط-الدومينو-نظام-أمريكي" class="text-4xl font-bold text-center mb-8 text-indigo-700">
-            مسجل نقاط الدومينو (نظام أمريكي)
-        </h1>
-
-        <div id="players-container" class="space-y-6">
-            <!-- Players will be added here dynamically -->
+<body>
+    <div class="container">
+        <h1>مسجل نقاط الدومينو</h1>
+        
+        <div class="input-container" id="teamInput">
+            <input type="text" id="newTeamInput" placeholder="أدخل اسم الفريق">
+            <button class="btn btn-primary" onclick="addTeam()">إضافة فريق</button>
         </div>
 
-        <button class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-            إضافة لاعب جديد
-        </button>
+        <div class="teams-container" id="teamsContainer"></div>
 
-        <button id="round-end" class="mt-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            إنهاء الجولة
-        </button>
+        <div class="actions" id="actions"></div>
+    </div>
 
-        <button id="downloadBtn" class="mt-4 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
-            تحميل بطاقة الاتصال
-        </button>
-
-        <p class="mt-8 text-center text-gray-600">
-            تم تصميم الصفحة بواسطة أبو وسيم
-        </p>
-
-        <div class="flex justify-center mt-2">
-            <a href="https://x.com/Daghriry" class="inline-flex items-center text-blue-400 hover:text-blue-300" target="_blank">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" class="mr-2">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-                </svg>
-                @Daghriry
-            </a>
+    <div class="modal-overlay" id="winnerModal">
+        <div class="modal">
+            <button class="close-button" onclick="closeModal()">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="modal-content" id="modalContent"></div>
         </div>
     </div>
 
     <script>
-        document.getElementById('downloadBtn').addEventListener('click', function() {
-            // Create vCard content
-            const vCardContent = `BEGIN:VCARD
-VERSION:3.0
-FN:Arab Media
-TEL:18053370977
-END:VCARD`;
+        // Initialize Lucide icons
+        lucide.createIcons();
 
-            // Create Blob with vCard content
-            const blob = new Blob([vCardContent], { type: 'text/vcard' });
-            const url = URL.createObjectURL(blob);
+        // Game State
+        let teams = [];
+        let winner = null;
 
-            // Create temporary link and trigger download
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'arab_media_contact.vcf';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        // DOM Elements
+        const teamInput = document.getElementById('teamInput');
+        const teamsContainer = document.getElementById('teamsContainer');
+        const actions = document.getElementById('actions');
+        const winnerModal = document.getElementById('winnerModal');
+        const modalContent = document.getElementById('modalContent');
+        const newTeamInput = document.getElementById('newTeamInput');
 
-            // Clean up the URL object
-            URL.revokeObjectURL(url);
+        // Add Team
+        function addTeam() {
+            const name = newTeamInput.value.trim();
+            if (name && teams.length < 2) {
+                teams.push({
+                    name,
+                    score: 0,
+                    wins: 0
+                });
+                newTeamInput.value = '';
+                if (teams.length === 2) {
+                    teamInput.style.display = 'none';
+                }
+                renderTeams();
+            }
+        }
+
+        // Update Score
+        function updateScore(index) {
+            teams[index].score += 2;
+            if (teams[index].score >= 22) {
+                teams[index].wins += 1;
+                winner = teams[index];
+                showWinnerModal();
+            }
+            renderTeams();
+        }
+
+        // Reset Game
+        function resetGame() {
+            teams = teams.map(team => ({
+                ...team,
+                score: 0
+            }));
+            winner = null;
+            closeModal();
+            renderTeams();
+        }
+
+        // Show Winner Modal
+        function showWinnerModal() {
+            const loser = teams.find(team => team !== winner);
+            modalContent.innerHTML = `
+                <i data-lucide="trophy" class="mx-auto" style="width: 4rem; height: 4rem; color: #EAB308;"></i>
+                <h2 class="winner-message">🎉 مبروك للفائز! 🎉</h2>
+                <p style="font-size: 1.25rem; margin-top: 0.5rem;">
+                    ${winner.name} فاز بالجولة!<br>
+                    <span style="color: #4338CA;">عدد الجولات المكسوبة: ${winner.wins}</span>
+                </p>
+                
+                <div class="loser-card">
+                    <i data-lucide="heart" style="width: 2rem; height: 2rem; color: #EF4444; margin: 0 auto 0.5rem;"></i>
+                    <p>حظاً أوفر المرة القادمة يا ${loser.name}!</p>
+                    <p style="font-size: 0.875rem; color: #6B7280; margin-top: 0.25rem;">
+                        عدد الجولات المكسوبة: ${loser.wins}
+                    </p>
+                </div>
+                
+                <button class="btn btn-primary" style="margin-top: 1.5rem;" onclick="resetGame()">
+                    جولة جديدة
+                </button>
+            `;
+            lucide.createIcons();
+            winnerModal.classList.add('show');
+        }
+
+        // Close Modal
+        function closeModal() {
+            winnerModal.classList.remove('show');
+        }
+
+        // Render Teams
+        function renderTeams() {
+            teamsContainer.innerHTML = teams.map((team, index) => `
+                <div class="team-card">
+                    <div class="team-header">
+                        <div class="team-info">
+                            <div class="team-name">${team.name}</div>
+                            <div class="team-wins">عدد الجولات: ${team.wins}</div>
+                        </div>
+                        <div class="team-score">${team.score}</div>
+                    </div>
+                    <button 
+                        class="score-button" 
+                        onclick="updateScore(${index})"
+                        ${winner ? 'disabled' : ''}
+                    >
+                        +2
+                    </button>
+                </div>
+            `).join('');
+
+            if (teams.length > 0 && !winner) {
+                actions.innerHTML = `
+                    <button class="btn btn-secondary" onclick="resetGame()">
+                        جولة جديدة
+                    </button>
+                `;
+            } else {
+                actions.innerHTML = '';
+            }
+        }
+
+        // Enter key event listener for team input
+        newTeamInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTeam();
+            }
         });
     </script>
 </body>
